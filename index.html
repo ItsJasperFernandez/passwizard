@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PassWizard - Password Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: #f9fafb;
+            transition: background 0.5s, color 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode {
+            background: #111827;
+            color: white;
+        }
+
+        .float-bg {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .float-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            top: -150px;
+            left: -150px;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .float-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            bottom: -100px;
+            right: -100px;
+            animation: float 10s ease-in-out infinite 2s;
+        }
+
+        .float-3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            top: 50%;
+            right: -125px;
+            animation: float 12s ease-in-out infinite 4s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 28rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .emoji-icon {
+            font-size: 4rem;
+            display: inline-block;
+            animation: gentle-float 3s ease-in-out infinite;
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes gentle-float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        .title-highlight {
+            color: #3b82f6;
+        }
+
+        .subtitle {
+            color: #6b7280;
+        }
+
+        body.dark-mode .subtitle {
+            color: #d1d5db;
+        }
+
+        .stats {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            border: 2px solid #f3f4f6;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .card {
+            background: #1f2937;
+            border-color: #374151;
+        }
+
+        .card:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .password-display {
+            background: linear-gradient(to right, #dbeafe, #fae8ff);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid #e5e7eb;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .password-display {
+            background: rgba(55, 65, 81, 0.5);
+            border-color: #4b5563;
+        }
+
+        .password-display.shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .password-text {
+            font-size: 1.125rem;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            user-select: all;
+            color: #111827;
+        }
+
+        body.dark-mode .password-text {
+            color: white;
+        }
+
+        .flame-icon {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            font-size: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .strength-section {
+            margin-bottom: 1rem;
+        }
+
+        .strength-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .strength-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        body.dark-mode .strength-label {
+            color: #d1d5db;
+        }
+
+        .strength-value {
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .strength-bar {
+            height: 0.75rem;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        body.dark-mode .strength-bar {
+            background: #374151;
+        }
+
+        .strength-fill {
+            height: 100%;
+            transition: all 0.7s ease-out;
+            border-radius: 9999px;
+            animation: pulse-slow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-slow {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-copy {
+            background: #f3f4f6;
+            color: #111827;
+            border: 2px solid #e5e7eb;
+        }
+
+        body.dark-mode .btn-copy {
+            background: #374151;
+            color: white;
+            border-color: #4b5563;
+        }
+
+        .btn-copy:hover {
+            background: #e5e7eb;
+            border-color: #d1d5db;
+        }
+
+        body.dark-mode .btn-copy:hover {
+            background: #4b5563;
+        }
+
+        .btn-generate {
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-generate:hover {
+            background: linear-gradient(to right, #2563eb, #7c3aed);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-generate.spin {
+            animation: spin-once 0.6s ease-out;
+        }
+
+        @keyframes spin-once {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .slider-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .slider-label {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        body.dark-mode .slider-label {
+            color: #d1d5db;
+        }
+
+        .slider-hint {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        body.dark-mode .slider-hint {
+            color: #9ca3af;
+        }
+
+        .slider {
+            width: 100%;
+            height: 0.75rem;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        body.dark-mode .option {
+            background: rgba(55, 65, 81, 0.5);
+        }
+
+        .option:hover {
+            background: #f3f4f6;
+            border-color: #e5e7eb;
+            transform: scale(1.02);
+        }
+
+        body.dark-mode .option:hover {
+            background: #4b5563;
+            border-color: #6b7280;
+        }
+
+        .option-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        body.dark-mode .option-label {
+            color: #e5e7eb;
+        }
+
+        .option:hover .option-label {
+            color: #111827;
+        }
+
+        body.dark-mode .option:hover .option-label {
+            color: white;
+        }
+
+        .checkbox {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: #3b82f6;
+            cursor: pointer;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-bottom: 0.25rem;
+        }
+
+        body.dark-mode .footer-text {
+            color: #6b7280;
+        }
+
+        .secret-message {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fbbf24;
+            color: #111827;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            font-weight: 700;
+            animation: bounce 1s infinite;
+        }
+
+        .combo-counter {
+            position: fixed;
+            top: 5rem;
+            right: 1rem;
+            background: #f97316;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            font-weight: 900;
+            font-size: 1.5rem;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 2s ease-out forwards;
+            z-index: 100;
+        }
+
+        @keyframes particle-float {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-150px) scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .party-mode {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet, red);
+            background-size: 400% 400%;
+            opacity: 0.3;
+            animation: party-gradient 2s ease infinite;
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        .party-emoji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            animation: spin 2s linear infinite;
+            z-index: 41;
+            pointer-events: none;
+        }
+
+        @keyframes party-gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="float-bg float-1"></div>
+    <div class="float-bg float-2"></div>
+    <div class="float-bg float-3"></div>
+
+    <div id="secretMessage" class="secret-message hidden"></div>
+    <div id="comboCounter" class="combo-counter hidden"></div>
+    <div id="partyMode" class="hidden">
+        <div class="party-mode"></div>
+        <div class="party-emoji">🎊</div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="emoji-icon" id="emojiIcon">🔐</div>
+            <h1>pass<span class="title-highlight">wizard</span></h1>
+            <p class="subtitle">because "password123" isn't gonna cut it</p>
+            <div id="stats" class="stats hidden"></div>
+            <div id="badges" class="badges"></div>
+        </div>
+
+        <div class="card">
+            <div class="password-display" id="passwordDisplay">
+                <p class="password-text" id="passwordText">hit that button below 👇</p>
+                <span id="flameIcon" class="flame-icon hidden"></span>
+            </div>
+
+            <div id="strengthSection" class="strength-section hidden">
+                <div class="strength-header">
+                    <span class="strength-label">strength level</span>
+                    <span class="strength-value" id="strengthValue"></span>
+                </div>
+                <div class="strength-bar">
+                    <div class="strength-fill" id="strengthFill"></div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-copy" id="copyBtn">
+                    <span id="copyIcon">📋</span>
+                    <span id="copyText">copy</span>
+                </button>
+                <button class="btn btn-generate" id="generateBtn">
+                    <span>⚡</span>
+                    <span>generate</span>
+                </button>
+            </div>
+
+            <div class="slider-section">
+                <div class="slider-header">
+                    <label class="slider-label">length (<span id="lengthValue">16</span> chars)</label>
+                    <span class="slider-hint" id="sliderHint">💪 solid</span>
+                </div>
+                <input type="range" min="4" max="32" value="16" class="slider" id="lengthSlider">
+            </div>
+
+            <div class="options">
+                <label class="option">
+                    <span class="option-label">ABC...XYZ</span>
+                    <input type="checkbox" class="checkbox" id="uppercase" checked>
+                </label>
+                <label class="option">
+                    <span class="option-label">abc...xyz</span>
+                    <input type="checkbox" class="checkbox" id="lowercase" checked>
+                </label>
+                <label class="option">
+                    <span class="option-label">123...789</span>
+                    <input type="checkbox" class="checkbox" id="numbers" checked>
+                </label>
+                <label class="option">
+                    <span class="option-label">!@#...$%^</span>
+                    <input type="checkbox" class="checkbox" id="symbols" checked>
+                </label>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">pro tip: try the konami code 🎮</p>
+            <p class="footer-text">press 'd' 3x for dark mode • made with ☕ and mild paranoia</p>
+        </div>
+    </div>
+
+    <script>
+        let password = '';
+        let length = 16;
+        let clicks = 0;
+        let sliderClicks = 0;
+        let konamiProgress = 0;
+        let dKeyPresses = 0;
+        let lastClickTime = 0;
+        let comboCount = 0;
+        let darkMode = false;
+
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        const emojis = ['🔐', '🔑', '🎲', '🎰', '⚡', '🌟', '💎', '🎯', '🚀', '🔮', '👾', '🎮', '🍕', '☕', '🌈', '💥'];
+        const funnyMessages = [
+            "password123... just kidding! 😄",
+            "hunter2 (you can see it, right?)",
+            "correcthorsebatterystaple",
+            "admin (nice try hackers)",
+            "qwerty... nah you deserve better",
+            "letmein... or not",
+            "iloveyou (aww thanks)",
+            "trustno1 (good advice tbh)",
+            "dragon (very original)",
+            "monkey (why is this so common?)",
+            "123456 (seriously?)",
+            "baseball (swing and a miss)"
+        ];
+        const secretMessages = [
+            { clicks: 25, msg: "🎮 Quarter way there! Keep clicking!" },
+            { clicks: 50, msg: "🎉 HALFWAY TO LEGEND STATUS! 50 passwords!" },
+            { clicks: 69, msg: "😏 nice." },
+            { clicks: 100, msg: "💯 CENTURY! You're a password master!" },
+            { clicks: 200, msg: "🔥 TWO HUNDRED?! Touch grass maybe?" },
+            { clicks: 300, msg: "👑 Password royalty right here!" },
+            { clicks: 420, msg: "🌿 blaze it... with secure passwords" },
+            { clicks: 500, msg: "🚀 500 PASSWORDS! You're insane!" },
+            { clicks: 666, msg: "😈 devil's password count unlocked" },
+            { clicks: 777, msg: "🎰 JACKPOT! Lucky number!" },
+            { clicks: 1000, msg: "👾 ONE THOUSAND! You've achieved enlightenment!" }
+        ];
+
+        const passwordText = document.getElementById('passwordText');
+        const passwordDisplay = document.getElementById('passwordDisplay');
+        const generateBtn = document.getElementById('generateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const copyIcon = document.getElementById('copyIcon');
+        const copyText = document.getElementById('copyText');
+        const lengthSlider = document.getElementById('lengthSlider');
+        const lengthValue = document.getElementById('lengthValue');
+        const sliderHint = document.getElementById('sliderHint');
+        const uppercase = document.getElementById('uppercase');
+        const lowercase = document.getElementById('lowercase');
+        const numbers = document.getElementById('numbers');
+        const symbols = document.getElementById('symbols');
+        const strengthSection = document.getElementById('strengthSection');
+        const strengthValue = document.getElementById('strengthValue');
+        const strengthFill = document.getElementById('strengthFill');
+        const flameIcon = document.getElementById('flameIcon');
+        const stats = document.getElementById('stats');
+        const badges = document.getElementById('badges');
+        const emojiIcon = document.getElementById('emojiIcon');
+        const secretMessage = document.getElementById('secretMessage');
+        const comboCounter = document.getElementById('comboCounter');
+        const partyMode = document.getElementById('partyMode');
+
+        function generatePassword() {
+            let charset = '';
+            let newPassword = '';
+
+            if (uppercase.checked) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (lowercase.checked) charset += 'abcdefghijklmnopqrstuvwxyz';
+            if (numbers.checked) charset += '0123456789';
+            if (symbols.checked) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+            if (charset === '') {
+                passwordText.textContent = 'umm... tick something maybe? 🤔';
+                return;
+            }
+
+            const now = Date.now();
+            const timeDiff = now - lastClickTime;
+
+            if (timeDiff < 500 && clicks > 0) {
+                comboCount++;
+                showCombo();
+
+                if (comboCount === 10) {
+                    showSecretMsg("🔥 10 HIT COMBO! You're on fire!");
+                    createMassiveParticles();
+                } else if (comboCount === 25) {
+                    showSecretMsg("⚡ 25 HIT COMBO! UNSTOPPABLE!");
+                    activatePartyMode();
+                }
+            } else {
+                comboCount = 0;
+            }
+
+            lastClickTime = now;
+
+            if (clicks > 0 && clicks % 10 === 0) {
+                const funnyPwd = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+                passwordText.textContent = funnyPwd;
+                passwordDisplay.classList.add('shake');
+                setTimeout(() => {
+                    for (let i = 0; i < length; i++) {
+                        newPassword += charset.charAt(Math.floor(Math.random() * charset.length));
+                    }
+                    password = newPassword;
+                    passwordText.textContent = newPassword;
+                    passwordDisplay.classList.remove('shake');
+                    calculateStrength();
+                }, 1500);
+                clicks++;
+                updateStats();
+                return;
+            }
+
+            for (let i = 0; i < length; i++) {
+                newPassword += charset.charAt(Math.floor(Math.random() * charset.length));
+            }
+
+            password = newPassword;
+            passwordText.textContent = newPassword;
+            clicks++;
+            updateStats();
+
+            const milestone = secretMessages.find(m => m.clicks === clicks);
+            if (milestone) {
+                showSecretMsg(milestone.msg);
+                createMassiveParticles();
+            }
+
+            if (Math.random() > 0.7) {
+                emojiIcon.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            }
+
+            generateBtn.classList.add('spin');
+            setTimeout(() => generateBtn.classList.remove('spin'), 600);
+
+            calculateStrength();
+            createParticles();
+        }
+
+        function calculateStrength() {
+            if (!password || password.includes('umm')) {
+                strengthSection.classList.add('hidden');
+                flameIcon.classList.add('hidden');
+                return;
+            }
+
+            strengthSection.classList.remove('hidden');
+
+            let score = 0;
+
+            if (password.length >= 20) score += 3;
+            else if (password.length >= 16) score += 2.5;
+            else if (password.length >= 12) score += 2;
+            else if (password.length >= 8) score += 1;
+            else score += 0.5;
+
+            if (/[a-z]/.test(password)) score += 1;
+            if (/[A-Z]/.test(password)) score += 1;
+            if (/[0-9]/.test(password)) score += 1;
+            if (/[^A-Za-z0-9]/.test(password)) score += 1.5;
+
+            let hasRepeating = /(.)\1{2,}/.test(password);
+            if (hasRepeating) score -= 1;
+
+            let charTypes = 0;
+            if (/[a-z]/.test(password)) charTypes++;
+            if (/[A-Z]/.test(password)) charTypes++;
+            if (/[0-9]/.test(password)) charTypes++;
+            if (/[^A-Za-z0-9]/.test(password)) charTypes++;
+            if (charTypes === 4) score += 0.5;
+
+            let strength = '';
+            let color = '';
+            let width = '';
+            let emoji = '';
+
+            if (score <= 2) {
+                strength = 'trash';
+                color = '#dc2626';
+                width = '15%';
+                emoji = '💀';
+                flameIcon.classList.add('hidden');
+            } else if (score <= 3.5) {
+                strength = 'weak';
+                color = '#ef4444';
+                width = '30%';
+                emoji = '😬';
+                flameIcon.classList.add('hidden');
+            } else if (score <= 5) {
+                strength = 'meh';
+                color = '#f59e0b';
+                width = '50%';
+                emoji = '😐';
+                flameIcon.classList.add('hidden');
+            } else if (score <= 6.5) {
+                strength = 'decent';
+                color = '#eab308';
+                width = '65%';
+                emoji = '👍';
+                flameIcon.classList.add('hidden');
+            } else if (score <= 8) {
+                strength = 'good';
+                color = '#84cc16';
+                width = '80%';
+                emoji = '💪';
+                flameIcon.classList.add('hidden');
+            } else if (score <= 9) {
+                strength = 'strong';
+                color = '#22c55e';
+                width = '90%';
+                emoji = '🛡️';
+                flameIcon.classList.add('hidden');
+            } else if (score <= 10) {
+                strength = 'beast mode';
+                color = '#10b981';
+                width = '100%';
+                emoji = '🔥';
+                flameIcon.classList.remove('hidden');
+                flameIcon.textContent = '🔥';
+            } else {
+                strength = 'UNBREAKABLE';
+                color = '#8b5cf6';
+                width = '100%';
+                emoji = '👑';
+                flameIcon.classList.remove('hidden');
+                flameIcon.textContent = '👑';
+            }
+
+            strengthValue.textContent = strength + ' ' + emoji;
+            strengthValue.style.color = color;
+            strengthFill.style.width = width;
+            strengthFill.style.backgroundColor = color;
+        }
+
+        function copyToClipboard() {
+            if (password && !password.includes('umm') && !password.includes('just kidding')) {
+                navigator.clipboard.writeText(password);
+                copyIcon.textContent = '✓';
+                copyText.textContent = 'yoinked!';
+                copyBtn.style.animation = 'bounce 0.5s';
+                createParticles();
+
+                setTimeout(() => {
+                    copyIcon.textContent = '📋';
+                    copyText.textContent = 'copy';
+                    copyBtn.style.animation = '';
+                }, 2000);
+            }
+        }
+
+        function updateSlider() {
+            length = parseInt(lengthSlider.value);
+            lengthValue.textContent = length;
+
+            if (length < 8) sliderHint.textContent = '⚠️ too short';
+            else if (length < 12) sliderHint.textContent = '👌 good';
+            else if (length < 16) sliderHint.textContent = '💪 solid';
+            else if (length < 24) sliderHint.textContent = '🔥 insane';
+            else sliderHint.textContent = '🚀 overkill';
+
+            sliderClicks++;
+            if (sliderClicks === 50) {
+                showSecretMsg("🎚️ Slider master! You've adjusted it 50 times!");
+                createParticles();
+            }
+        }
+
+        function updateStats() {
+            if (clicks > 0) {
+                stats.classList.remove('hidden');
+                stats.textContent = `${clicks} ${clicks === 1 ? 'password' : 'passwords'} conjured ✨`;
+
+                badges.innerHTML = '';
+                if (clicks >= 25) badges.innerHTML += '🏅';
+                if (clicks >= 50) badges.innerHTML += '🏆';
+                if (clicks >= 100) badges.innerHTML += '👑';
+                if (clicks >= 500) badges.innerHTML += '🚀';
+            }
+        }
+
+        function createParticles() {
+            const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = (Math.random() * 10 + 4) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        function createMassiveParticles() {
+            const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = (Math.random() * 15 + 6) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        function showSecretMsg(msg) {
+            secretMessage.textContent = msg;
+            secretMessage.classList.remove('hidden');
+            setTimeout(() => secretMessage.classList.add('hidden'), 3000);
+        }
+
+        function showCombo() {
+            if (comboCount > 1) {
+                comboCounter.textContent = `${comboCount}x COMBO! 🔥`;
+                comboCounter.classList.remove('hidden');
+                setTimeout(() => comboCounter.classList.add('hidden'), 1000);
+            }
+        }
+
+        function activatePartyMode() {
+            partyMode.classList.remove('hidden');
+            createMassiveParticles();
+            setTimeout(() => partyMode.classList.add('hidden'), 5000);
+        }
+
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode');
+            showSecretMsg("🌙 dark mode " + (darkMode ? "activated" : "deactivated") + "!");
+        }
+
+        generateBtn.addEventListener('click', generatePassword);
+        copyBtn.addEventListener('click', copyToClipboard);
+        lengthSlider.addEventListener('input', updateSlider);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiProgress]) {
+                konamiProgress++;
+                if (konamiProgress === konamiCode.length) {
+                    activatePartyMode();
+                    konamiProgress = 0;
+                }
+            } else {
+                konamiProgress = 0;
+            }
+
+            if (e.key === 'd' || e.key === 'D') {
+                dKeyPresses++;
+                if (dKeyPresses === 3) {
+                    toggleDarkMode();
+                    dKeyPresses = 0;
+                }
+                setTimeout(() => dKeyPresses = 0, 1000);
+            }
+        });
+
+        generatePassword();
+    </script>
+</body>
+
+</html>
