@@ -1,29 +1,57 @@
-# 🔐 passwizard  
-Because `"password123"` isn't gonna cut it in 2025.  
+<p align="center">
+  <img src="PASSWIZARD-banner.png" alt="Passwizard Banner" width="100%">
+</p>
+
+<h1 align="center">✨ PASSWIZARD ✨</h1>
+
+<p align="center">
+  <b>Because "password123" isn't gonna cut it.</b><br>
+  <a href="https://itsjasperfernandez.github.io/passwizard/">🌐 Live Demo</a> •
+  <a href="https://github.com/itsjasperfernandez/passwizard">📁 Repository</a>
+</p>
+
+---
+
+## 🧩 About
+
+**PASSWIZARD** is an interactive password generator that mixes security with style.  
+Generate strong, chaotic, and borderline magical passwords with options for uppercase, numbers, symbols, and length — all wrapped up in a slick animated UI.
 
 ---
 
 ## ✨ Features
--  Generate secure passwords instantly  
--  Options: uppercase, lowercase, numbers, symbols  
--  Adjustable password length (4–32 chars)  
-- 📋One-click copy to clipboard (yoink!)  
-- 🔥Password strength meter with emoji reactions  
-- 🌙Hidden dark mode toggle (press `d` 3x)  
-- Konami code = PARTY MODE (try it 👀)  
--  Achievements, combos, and secret messages  
-- Particle explosions, spin buttons, shaky text, and more chaos  
+
+- 🔐 Instant secure password generation  
+- 🎛️ Adjustable length (4 – 32 chars)  
+- 🔠 Toggles for uppercase, numbers, and symbols  
+- 📋 One-click copy to clipboard  
+- 💪 Password strength meter with emoji reactions  
+- 🌙 Hidden dark-mode toggle  
+- 🕹️ Konami-code party mode (yes, really)  
+- 🎮 Combo counter and bonus animations  
 
 ---
 
-## 🎨 Demo Preview
-> Peak
-(Screenshots/gif here when you upload!)
+## 🧠 Tech Stack
+
+| Category | Tools |
+|-----------|--------|
+| **Frontend** | React + Vite |
+| **Styling** | TailwindCSS |
+| **Icons** | Lucide React |
+| **Hosting** | GitHub Pages |
 
 ---
 
-## 🚀 Getting Started
-Clone the repo:
-```bash
-git clone https://github.com/YOUR_USERNAME/passwizard.git
+## 🚀 Run Locally
+# Clone the repo
+git clone https://github.com/itsjasperfernandez/passwizard.git
+
+# Enter folder
 cd passwizard
+
+# Install dependencies
+npm install
+
+# Run dev server
+npm run dev
